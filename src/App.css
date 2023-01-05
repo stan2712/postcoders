@@ -7,6 +7,6 @@
 
 .App {
   height: 90vh;
-  width: 90vw;
-  border: solid grey 2px;
+  width: auto;
+  margin: auto;
 }
