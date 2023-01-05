@@ -1,31 +1,57 @@
-import { useEffect, useState } from 'react'
-import { getAreaData } from './api'
+import { useEffect, useState } from "react";
+import { getAreaData } from "./api";
 
-import './App.css'
+import "./App.css";
 
 function App() {
-
   const [areas, setAreas] = useState([]);
+  const [postcode, setPostcode] = useState("");
+  const [input, setInput] = useState("");
+  const [loading, setLoading] = useState(true);
 
-  const load = async () => {
+  const handleChange = (e) => {
+    setInput(e.target.value);
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    setPostcode(input);
+  };
+
+  const load = async (postcode) => {
     try {
-      const areaData = await getAreaData()
+      const areaData = await getAreaData(postcode);
       setAreas(areaData);
     } catch (error) {
-      console.log(error.message)
+      window.alert("Invalid postcode");
     }
-  }
+  };
+
+  // if (postcode) added to prevent inital GET request errors when first opening the page 
 
   useEffect(() => {
-    load();
-  }, []);
+    if (postcode) load(postcode)
+    setLoading(false)
+  }, [postcode]);
 
-  return (
+  return loading ? (
+    <p> Loading results..</p>
+  ) : (
     <div className="App">
       <h1>Postcoders</h1>
-      <h2>{`Areas for BB10: ${areas.length}`}</h2>
+      <h2>{`Areas for ${postcode.toUpperCase()}: ${areas.length}`}</h2>
+      <h3>Please enter only the first part of the postcode. For example SW1A rather than SW1A 1AA</h3>
+      <form onSubmit={handleSubmit}>
+        <input
+          type="text"
+          className="searchField"
+          onChange={handleChange}
+          value={input}
+          maxLength={4}
+        ></input>
+      </form>
     </div>
-  )
+  );
 }
 
-export default App
+export default App;
