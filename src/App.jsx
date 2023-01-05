@@ -15,7 +15,7 @@ function App() {
   
       setAreas(areas);
     } catch (error) {
-      window.alert("todo: fix app")
+      console.log(error.message)
     }
   }
 
