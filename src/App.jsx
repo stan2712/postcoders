@@ -8,6 +8,7 @@ function App() {
   const [areas, setAreas] = useState([]);
   const [postcode, setPostcode] = useState("");
   const [input, setInput] = useState("");
+  const [cache, setCache] = useState("");
 
   const handleChange = (e) => {
     setInput(e.target.value);
@@ -20,10 +21,19 @@ function App() {
 
   const load = async (postcode) => {
     try {
-      const areaData = await getAreaData(postcode);
-      setAreas(areaData);
+      if (cache[postcode]) {
+        setAreas(cache[postcode]);
+      } else {
+        const areaData = await getAreaData(postcode);
+        setCache((currCache) => {
+          const newCache = { ...currCache };
+          newCache[postcode] = areaData;
+          return newCache;
+        });
+        setAreas(areaData);
+      }
     } catch (error) {
-      window.alert("Invalid postcode");
+      window.alert("Invalid Postcode");
     }
   };
 
@@ -48,7 +58,6 @@ function App() {
           onChange={handleChange}
           value={input}
           maxLength={4}
-
         ></input>
       </form>
 
